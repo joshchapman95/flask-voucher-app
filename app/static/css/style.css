@@ -1,0 +1,692 @@
+html,
+body {
+    max-height: 100svh;
+    min-height: 100svh;
+    height: auto;
+    display: flex;
+    overflow-y: auto;
+    flex-direction: column;
+    margin: 0;
+    font-family: "Quicksand", sans-serif;
+    width: 100%;
+    overflow-x: hidden;
+    justify-content: space-between;
+}
+
+.container-fluid {
+    flex-shrink: 0;
+}
+
+@font-face {
+    font-family: 'MaryKate';
+    src: url('../fonts/FontsFree-Net-Marykate-Regular.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'LazyDog';
+    src: url('../fonts/lazy_dog.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ahkio';
+    src: url('../fonts/Ahkio-W00-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gagalin';
+    src: url('../fonts/Gagalin-Regular.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.logo-container {
+    margin-top: 35px;
+}
+
+.welcome-text {
+    text-align: center;
+    align-items: center;
+    font-family: "Caveat";
+    width: 100%;
+    margin-bottom: 10px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffe494;
+    display: flex;
+    flex-direction: column;
+}
+
+.stores-modal-content {
+    max-height: 70vh;
+
+    overflow-y: auto;
+}
+
+.stores-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.stores-list li {
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+
+.congratulations-text {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.5rem;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.party-popper {
+    width: 20vw;
+    height: auto;
+}
+
+
+.redeemed-text {
+    font-family: "MaryKate";
+    font-weight: bold;
+    font-size: calc(2rem + 1vw);
+    margin-bottom: 1rem;
+}
+
+.next-voucher-text {
+    font-family: 'Gagalin', sans-serif;
+    font-size: calc(1.7rem + 1vw);
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+
+.countdown-text {
+    font-family: 'MaryKate';
+    font-size: 2.5rem;
+    color: black;
+}
+
+.custom-modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.custom-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: #ffe494;
+    padding: 20px;
+    border: 2px solid black;
+    border-radius: 25px;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    transform: scale(0.7);
+    transition: transform 0.3s ease;
+}
+
+footer a {
+    color: black;
+
+}
+
+.tos-links {
+    text-decoration: underline;
+}
+
+.custom-modal.show .modal-content {
+    transform: scale(1);
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.store-name,
+.store-website {
+    font-size: 2.3rem;
+    font-family: "Ahkio";
+    color: black;
+}
+
+
+.store-website {
+    font-size: 1.5rem;
+}
+
+
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-redeem {
+
+    color: white;
+    font-weight: bold;
+    background-color: #559dd8;
+    font-family: "Knewave";
+    font-size: calc(1.4rem + 1vw);
+    border: none;
+    border-radius: 50px;
+    width: 60%;
+    padding: 15px 20px;
+    max-width: 330px;
+    position: relative;
+    box-shadow: 0 8px 0 black;
+    transition: all 0.1s;
+    text-shadow:
+        0 0 2px #000,
+        0 0 2px #000,
+        0 0 2px #000,
+        0 0 2px #000,
+        0 0 2px #000,
+        0 0 2px #000,
+        0 0 2px #000,
+        0 0 2px #000;
+
+}
+
+.btn-redeem::before {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: -7px;
+    right: -7px;
+    bottom: -17px;
+    background-color: black;
+    border-radius: 40px;
+    z-index: -1;
+}
+
+.logo-image {
+    max-width: 500px;
+    max-height: 13vh;
+    width: auto;
+}
+
+
+.link {
+    color: black !important;
+    font-family: "Quicksand", sans-serif;
+    font-size: max(calc(.8rem + .8vw) calc(1rem + 1vw));
+    text-decoration: underline;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+
+.wide-text {
+    font-family: "MaryKate";
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: clamp(1.2rem, 2.5vh, 2.5rem);
+    line-height: 1.3;
+    box-sizing: border-box;
+}
+
+.voucher-wide-text {
+    box-sizing: border-box;
+    font-family: "MaryKate";
+    text-align: center;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 10%;
+    font-size: calc(2.6rem + 1vw);
+}
+
+.btn-primary {
+    color: white;
+    font-weight: bold;
+    background-color: #559dd8;
+    display: inline-block;
+    font-family: "Knewave", sans-serif;
+    border: none;
+    border-radius: 3em;
+    padding: 0.5em 0.75em;
+    width: min(75%, 300px);
+    position: relative;
+    box-shadow: 0 0.25em 0 black;
+    margin-bottom: 15px;
+    transition: all 0.1s;
+}
+
+/* Override hover and active states */
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus {
+    background-color: #559dd8;
+    color: white;
+    box-shadow: 0 8px 0 black;
+    outline: none;
+}
+
+.generate-voucher-svg {
+    width: 50%;
+}
+
+.custom-select option {
+    text-align: center;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: -7%;
+    left: -1.6%;
+    right: -1.6%;
+    bottom: -20%;
+    background-color: black;
+    border-radius: 2.6em;
+    z-index: -1;
+}
+
+.main-content {
+    display: flex;
+    flex: 1 0 auto;
+    /* Grow and shrink as needed */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 1000px;
+}
+
+#content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.discount-details {
+    font-size: 1.7rem;
+    font-family: "Barlow Semi Condensed", sans-serif;
+}
+
+footer {
+    flex-shrink: 0;
+    background-color: #ffe494;
+    line-height: 1.2;
+    font-family: "Barlow Semi Condensed", sans-serif;
+}
+
+.voucher-card {
+
+    text-align: center;
+    background-color: #fff9f9;
+    border: 2px solid black;
+    border-radius: 25px;
+    line-height: 1.5;
+    margin: 0 auto;
+    max-width: min(600px, 95vw);
+    min-width: 95%;
+}
+
+.voucher-card .card-body {
+    padding: .5rem;
+}
+
+.custom-row {
+    max-height: 100svh;
+}
+
+.voucher-card h3 {
+    font-size: .8rem;
+    margin-bottom: 0.3rem;
+}
+
+.voucher-card p {
+
+    margin-bottom: 0.3rem;
+}
+
+.button-wrapper {
+    max-width: 500px;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.button-wrapper button {
+    margin: 0 10px;
+    margin-top: 15px;
+    flex-shrink: 1;
+    flex-basis: calc(50% - 10px);
+}
+
+.btn-claim,
+.btn-tryagain {
+    background-color: #5cb6f9;
+    font-family: "Ahkio";
+    color: white;
+    font-weight: bold;
+    border: none;
+    position: relative;
+    border-radius: 38px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 0 #1f1347;
+    font-size: 1.1em;
+}
+
+.btn-tryagain {
+    background-color: #ac6c53;
+}
+
+.btn-claim::before,
+.btn-tryagain::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -2.5%;
+    right: -2.5%;
+    bottom: -23%;
+    background-color: #260548;
+    border-radius: 2em;
+    z-index: -1;
+}
+
+.content-spacing {
+    margin-top: -2rem;
+}
+
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    max-width: 70%;
+    max-width: min(70%, 350px);
+    overflow-x: hidden;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#location-input {
+    transition: border-color 0.3s ease;
+}
+
+#location-input:focus {
+    outline: none;
+}
+
+.ui-menu-item {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+
+.ui-menu-item:hover {
+    background-color: #f0f0f0;
+}
+
+.select-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.custom-select,
+#location-input {
+    font-family: "LazyDog";
+    width: 65%;
+    max-width: 250px;
+    min-height: 40px;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+    color: black;
+    padding-right: 5px;
+    margin-bottom: 10px;
+    background-color: white;
+    border: 4px solid black;
+    border-radius: 25px;
+    text-align: center;
+    text-align-last: center;
+    -webkit-text-align-last: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+#location-input {
+    max-width: 350px;
+    padding-top: 5px;
+    width: 100%;
+}
+
+.input-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 75%;
+    max-width: 400px;
+}
+
+.input-symbol {
+    position: absolute;
+    left: 5%;
+    font-size: 1.3rem;
+    top: 38%;
+    transform: translateY(-50%);
+    color: black;
+}
+
+.logo-container {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.app-logo {
+    height: 1em;
+    margin-bottom: 40px;
+    width: auto;
+}
+
+@media(min-height: 700px) {
+    .wide-text {
+
+        font-size: calc(2.2rem + 1vw);
+    }
+}
+
+@media(min-height: 1000px) {
+    .wide-text {
+
+        font-size: calc(3.2rem + 1vw);
+    }
+
+    .voucher-wide-text {
+        font-size: calc(3.5rem + 1.2vw);
+    }
+
+}
+
+
+@media (min-width: 1000px) {}
+
+@media (min-width: 768px) {
+    .img-fluid {
+        max-width: 50%;
+        max-width: 600px;
+        max-height: 400px;
+    }
+
+    @media (min-height: 1003px) {
+
+        .congratulations-text {
+            font-size: 2rem;
+        }
+
+        .countdown-text {
+            font-size: 3rem;
+        }
+
+        .wide-text {
+
+            font-size: calc(4rem + 1vw);
+
+        }
+
+        .voucher-wide-text {
+            font-size: calc(3.5rem + 1.2vw);
+        }
+
+        body {
+            justify-content: space-between;
+        }
+
+        footer {
+            vertical-align: bottom !important;
+            align-items: flex-end;
+
+        }
+        .custom-select,
+        #location-input {
+            width: 100%;
+            min-height: 45px;
+            font-size: 1rem;
+        }
+
+        @media (min-width: 1000px) {
+            .btn-redeem::before {
+
+                top: -7px;
+                left: -7px;
+                right: -7px;
+                bottom: -20px;
+                border-radius: 50px;
+            }
+
+            .party-popper {
+                width: 12vw;
+                height: auto;
+            }
+
+
+        }
+
+        @media (min-width: 1400px) {
+            .next-voucher-text {
+                font-size: calc(1.8rem + 1vw);
+
+            }
+
+            .redeemed-text {
+                font-size: calc(2rem + 1vw);
+
+            }
+
+            .party-popper {
+                width: 8vw;
+                height: auto;
+            }
+        }
+
+        .welcome-text {
+            font-size: calc(3rem + 1vw);
+        }
+
+        .voucher-card h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .voucher-card p {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+    }
+}
+
+@media (max-height: 790px) {
+    .main-content {
+        top: -20px;
+    }
+}
+
+@media (max-width: 415px) {
+
+    .next-voucher-text {
+        font-size: calc(1.2rem + 1vw);
+    }
+
+    .redeemed-text {
+        font-size: calc(1.7rem + 1vw);
+    }
+
+    .voucher-wide-text {
+
+        font-size: calc(2.2rem + 1.2vw);
+    }
+
+    .wide-text {
+        font-size: calc(1.8rem + 1vw);
+    }
+
+    @media(max-height: 670px) {
+        .wide-text {
+            font-size: calc(1.7rem + 1vw);
+        }
+
+        .img-fluid {
+            max-height: 150px;
+        }
+    }
+
+    .btn-claim,
+    .btn-tryagain {
+        font-size: .9em;
+    }
+
+    .btn-claim::before,
+    .btn-tryagain::before {
+
+        border-radius: 30px;
+    }
+}

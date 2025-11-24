@@ -1,0 +1,43 @@
+<div class="row justify-content-center align-items-start">
+    <div class="col">
+        <div class="text-center mb-4 wide-text">
+            Click the button below to claim your FREE daily voucher for a nearby business!
+        </div>
+
+        <div class="text-center mb-2">
+            <a href="#" id="see-stores-link" class="link">See participating stores</a>
+        </div>
+
+        <div id="storesModal" class="custom-modal">
+            <div class="modal-content stores-modal-content">
+                <span class="close-button">&times;</span>
+                <ul id="storesList" class="stores-list"></ul>
+            </div>
+        </div>
+
+        <div class="select-wrapper">
+            <select class="custom-select" id="category-select">
+                <option value="any">SELECT A CATEGORY ...</option>
+                {% for category in categories %}
+                <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="text-center">
+            <div class="input-wrapper">
+                <span class="input-symbol"></span>
+                <input type="text" id="location-input" value="   USING CURRENT LOCATION ..." autocomplete="off">
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button id="generate-btn" class="btn-primary">
+                <img src="{{ url_for('static', filename='images/generate_voucher.svg') }}" alt="GENERATE VOUCHER"
+                    class="generate-voucher-svg">
+            </button>
+        </div>
+    </div>
+</div>
+
+<link href='https://fonts.googleapis.com/css?family=Caveat' rel='stylesheet'>
+<script type="module" src="/static/js/home.js"></script>

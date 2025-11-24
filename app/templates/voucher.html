@@ -1,0 +1,20 @@
+<div class="row flex-grow-1 justify-content-center">
+    <div class="col">
+        <input type="hidden" id="voucher-category" value="{{ category }}">
+        <h2 class="fw-bold lead voucher-wide-text">Congrats!<br> See your voucher below</h2>
+        <div class="voucher-card card">
+            <div class="card-body">
+                <p class="fw-bold store-name">{{ discount.store.name }}</p>
+                <p class="discount-details">{{ discount.details }}</p>
+                <a href="{{ discount.store.website }}" class="fw-bold store-website">{{ discount.store.website }}</a>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between button-wrapper mx-auto">
+            <button id="claim-btn" class="btn btn-claim btn-small">CLAIM NOW</button>
+            <button id="tryagain-btn" class="btn btn-tryagain btn-small">TRY AGAIN <br>({{ user.rerolls }}
+                remaining)</button>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="discount-id" value="{{ discount.token }}">
+<script type="module" src="/static/js/voucher.js"></script>

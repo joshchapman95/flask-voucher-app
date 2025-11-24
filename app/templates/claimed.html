@@ -1,0 +1,26 @@
+<div class="row flex-grow-1 justify-content-center">
+  <div class="col">
+    <div class="text-center mb-3">
+      <input type="hidden" id="voucher-token" value="{{ token }}">
+      <p class="lead wide-text">Here's your unique QR code<br>
+        Scan in the relevant store to redeem your discount</p>
+    </div>
+
+    <div class="text-center mb-3">
+      <img src="{{ qr_img_url }}" alt="QR Code" class="img-fluid" style="max-width: 50%; max-width: 200px;">
+    </div>
+    <div class="expiry-time text-center" style="margin-bottom: 10px;">
+      Expires: {{ expiry_time }}
+    </div>
+
+    <div class="voucher-card card">
+      <div class="card-body">
+        <p class="fw-bold store-name">{{ discount.store.name }}</p>
+        <p class="discount-details">{{ discount.details }}</p>
+        <a class="fw-bold store-website" href="{{ discount.store.website }}">{{ discount.store.website }}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/static/js/claimed.js"></script>

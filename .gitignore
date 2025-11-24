@@ -1,0 +1,67 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+
+# Database files
+*.sqlite3
+*.db
+development.db
+
+# Pytest cache
+.pytest_cache/
+
+# Migrations
+migrations/
+
+# Python cache files
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables
+.env
+
+# Editor specific files
+.vscode/
+
+# Log files
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Test cache
+.pytest_cache/
+
+# Temporary files
+*.tmp
+
+# Compiled Python files
+*.pyc
+
+# Python egg metadata
+*.egg-info/
+*.egg
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Documentation
+# README.md
+
+# Cache directories
+.mypy_cache/
+.ruff_cache/
+
+init.sharded.py
+
+init.py.dev
+
+instance

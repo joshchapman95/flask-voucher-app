@@ -1,0 +1,19 @@
+<div class="row flex-grow-1 justify-content-center align-items-start">
+    <div class="col">
+        <p class="lead wide-text">
+            Click the button below to redeem the discount
+        </p>
+        <div class="voucher-card card" style="margin-bottom: 10%">
+            <div class="card-body">
+                <p class="fw-bold store-name">{{ discount.store.name }}</p>
+                <p class="discount-details">{{ discount.details }}</p>
+                <p class="fw-bold store-website">{{ discount.store.website }}</p>
+            </div>
+        </div>
+        <div class="text-center">
+            <button id="redeem-btn" class="btn-redeem">REDEEM</button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="/static/js/redeem.js"></script>

@@ -1,0 +1,57 @@
+# Python cache files
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# Development database
+*.db
+development.db
+
+# Environment variables
+.env
+
+# Git related
+.git
+.gitignore
+
+# Editor specific files
+.vscode/
+
+# Log files
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Test cache
+.pytest_cache/
+
+# Static files (if handled separately in production)
+# Uncomment if needed
+# app/static/
+
+# Temporary files
+*.tmp
+
+# Compiled Python files
+*.pyc
+
+# Python egg metadata
+*.egg-info/
+*.egg
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Documentation
+README.md
+
+# Cache directories
+.mypy_cache/
+.ruff_cache/
