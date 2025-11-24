@@ -1,3 +1,4 @@
+import math
 import random
 import logging
 from flask import jsonify, render_template, current_app, url_for
@@ -8,6 +9,16 @@ import qrcode
 from qrcode.image.pil import PilImage
 from app import db
 from app.models import User, Discount, Store, Claimed
+from app.constants import (
+    EARTH_DEGREE_KM,
+    LATITUDE_MAX,
+    LONGITUDE_MAX,
+    QR_CODE_EXPIRY_SECONDS,
+    CACHE_TIMEOUT_SECONDS,
+    QR_BOX_SIZE,
+    QR_BORDER_SIZE,
+    HTTP_500_INTERNAL_SERVER_ERROR
+)
 from io import BytesIO
 import json
 import base64
@@ -22,6 +33,23 @@ def get_random_discount(user_lat, user_long, previous_voucher=None, category=Non
     """Get a random discount within the specified distance from the user's location."""
     try:
         max_distance = current_app.config['VOUCHER_DISTANCE']
+
+        # Calculate bounding box for initial filtering
+        # 1 degree of latitude is approximately 111 km
+        lat_change = max_distance / EARTH_DEGREE_KM
+        
+        # 1 degree of longitude is approximately 111 km * cos(latitude)
+        
+        if abs(user_lat) >= LATITUDE_MAX:
+            long_change = LONGITUDE_MAX
+        else:
+            long_change = abs(max_distance / (EARTH_DEGREE_KM * math.cos(math.radians(user_lat))))
+
+        min_lat = user_lat - lat_change
+        max_lat = user_lat + lat_change
+        min_long = user_long - long_change
+        max_long = user_long + long_change
+
         query = Discount.query.filter(
             and_(Discount.available == True, Discount.id != previous_voucher)
         )
@@ -29,7 +57,15 @@ def get_random_discount(user_lat, user_long, previous_voucher=None, category=Non
         if category and category.lower() != "any":
             query = query.filter(Discount.category == category)
         
-        discounts = query.join(Store).all()
+        # Apply bounding box filter in SQL
+        query = query.join(Store).filter(
+            and_(
+                Store.lat.between(min_lat, max_lat),
+                Store.long.between(min_long, max_long)
+            )
+        )
+
+        discounts = query.all()
   
         nearby_discounts = [
             d for d in discounts
@@ -112,7 +148,7 @@ def store_qr_code(token, qr_image):
         })
 
         redis_client = current_app.config['REDIS_CLIENT']
-        redis_client.setex(f"qr_code:{token}", 86500, qr_data)  
+        redis_client.setex(f"qr_code:{token}", QR_CODE_EXPIRY_SECONDS, qr_data)  
         
         return base64.b64decode(img_str)
     except Exception as e:
@@ -147,7 +183,7 @@ def get_stores_with_discounts():
     stores = db.session.query(Store).join(Discount).filter(Discount.available == True).distinct().all()
     store_list = [{"name": store.name} for store in stores]
     
-    redis_client.setex(cache_key, 3600, json.dumps(store_list))  # Cache for 1 hour
+    redis_client.setex(cache_key, CACHE_TIMEOUT_SECONDS, json.dumps(store_list)) 
     return store_list
 
 def generate_qr_code(token):
@@ -161,8 +197,8 @@ def generate_qr_code(token):
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=1,
+            box_size=QR_BOX_SIZE,
+            border=QR_BORDER_SIZE,
         )
         qr.add_data(qr_url)
         qr.make(fit=True)
@@ -187,7 +223,7 @@ def render_voucher(discount, user, category):
     except Exception as e:
         logger.error(f"Error in render_voucher: {str(e)}", exc_info=True)
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Failed to render voucher"}), 500
+        return jsonify({"error": "Failed to render voucher"}), HTTP_500_INTERNAL_SERVER_ERROR
 
 def render_claimed_voucher(discount, claimed):
     """Render the claimed voucher template."""
@@ -207,7 +243,7 @@ def render_claimed_voucher(discount, claimed):
     except Exception as e:
         logger.error(f"Error in render_claimed_voucher: {str(e)}", exc_info=True)
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Failed to render claimed voucher"}), 500
+        return jsonify({"error": "Failed to render claimed voucher"}), HTTP_500_INTERNAL_SERVER_ERROR
 
 def render_home(categories):
     """Render the home template."""
@@ -216,7 +252,7 @@ def render_home(categories):
     except Exception as e:
         logger.error(f"Error in render_home: {str(e)}", exc_info=True)
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Failed to render home page"}), 500
+        return jsonify({"error": "Failed to render home page"}), HTTP_500_INTERNAL_SERVER_ERROR
 
 def render_redeem_page(discount, token):
     """Render the redeem voucher template."""
@@ -225,7 +261,7 @@ def render_redeem_page(discount, token):
     except Exception as e:
         logger.error(f"Error in render_redeemed: {str(e)}", exc_info=True)
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Failed to render redeemed page"}), 500
+        return jsonify({"error": "Failed to render redeemed page"}), HTTP_500_INTERNAL_SERVER_ERROR
     
 def render_redeemed():
     """Render the redeemed voucher template."""
@@ -234,7 +270,7 @@ def render_redeemed():
     except Exception as e:
         logger.error(f"Error in render_redeemed: {str(e)}", exc_info=True)
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Failed to render redeemed page"}), 500
+        return jsonify({"error": "Failed to render redeemed page"}), HTTP_500_INTERNAL_SERVER_ERROR
     
 def return_generic_error():
     """Return a generic error response."""

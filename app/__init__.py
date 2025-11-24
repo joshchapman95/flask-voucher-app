@@ -17,6 +17,15 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import get_config
+from app.constants import (
+    REDIS_SOCKET_TIMEOUT,
+    REDIS_CONNECT_TIMEOUT,
+    LIMITER_CONNECT_TIMEOUT,
+    HTTP_404_NOT_FOUND,
+    HTTP_400_BAD_REQUEST,
+    HTTP_429_TOO_MANY_REQUESTS,
+    HTTP_500_INTERNAL_SERVER_ERROR
+)
 
 
 db = SQLAlchemy()
@@ -126,8 +135,8 @@ def create_app():
             port=app.config["REDIS_PORT"],
             decode_responses=True,
             password=app.config["REDIS_PASSWORD"],
-            socket_connect_timeout=5,
-            socket_timeout=5,
+            socket_connect_timeout=REDIS_SOCKET_TIMEOUT,
+            socket_timeout=REDIS_CONNECT_TIMEOUT,
         )
         redis_client.ping()  # Test connection
         app.config["REDIS_CLIENT"] = redis_client
@@ -140,7 +149,7 @@ def create_app():
         limiter = Limiter(
             get_remote_address,
             storage_uri=redis_uri,
-            storage_options={"socket_connect_timeout": 30},
+            storage_options={"socket_connect_timeout": LIMITER_CONNECT_TIMEOUT},
             strategy="fixed-window-elastic-expiry",
         )
         limiter.init_app(app)
@@ -188,32 +197,32 @@ def create_app():
             raise
 
     # Error handlers
-    @app.errorhandler(404)
+    @app.errorhandler(HTTP_404_NOT_FOUND)
     def not_found_error(error):
         """Handle 404 errors."""
-        return jsonify({"html": render_template("error.html"), "is_home": False}), 404
+        return jsonify({"html": render_template("error.html"), "is_home": False}), HTTP_404_NOT_FOUND
 
-    @app.errorhandler(400)
+    @app.errorhandler(HTTP_400_BAD_REQUEST)
     def bad_request_error(error):
         """Handle 400 errors."""
-        return jsonify({"html": render_template("error.html"), "is_home": False}), 400
+        return jsonify({"html": render_template("error.html"), "is_home": False}), HTTP_400_BAD_REQUEST
 
-    @app.errorhandler(429)
+    @app.errorhandler(HTTP_429_TOO_MANY_REQUESTS)
     def ratelimit_handler(e):
         """Handle rate limit errors."""
         return redirect(url_for("main.catch_all"))
 
-    @app.errorhandler(500)
+    @app.errorhandler(HTTP_500_INTERNAL_SERVER_ERROR)
     def internal_error(error):
         """Handle 500 errors."""
         db.session.rollback()
         app.logger.error("Server Error: %s", str(error))
-        return jsonify({"html": render_template("error.html"), "is_home": False}), 500
+        return jsonify({"html": render_template("error.html"), "is_home": False}), HTTP_500_INTERNAL_SERVER_ERROR
 
     @app.errorhandler(Exception)
     def unhandled_exception(e):
         """Handle unhandled exceptions."""
         app.logger.error("Unhandled Exception: %s", str(e))
-        return jsonify({"html": render_template("error.html"), "is_home": False}), 500
+        return jsonify({"html": render_template("error.html"), "is_home": False}), HTTP_500_INTERNAL_SERVER_ERROR
 
     return app

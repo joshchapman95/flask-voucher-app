@@ -1,15 +1,22 @@
 from app import db
 from datetime import datetime, timezone, timedelta
 import uuid, pytz
+from app.constants import (
+    MAX_STRING_LENGTH,
+    SHORT_STRING_LENGTH,
+    TOKEN_LENGTH,
+    DEFAULT_REROLLS,
+    VOUCHER_EXPIRY_HOURS
+)
 
 
 class User(db.Model):
     """User model."""
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    device_id = db.Column(db.String(255), unique=True, nullable=False)
-    rerolls = db.Column(db.Integer, nullable=False, default=2)
-    timezone = db.Column(db.String(255), nullable=False)
+    device_id = db.Column(db.String(MAX_STRING_LENGTH), unique=True, nullable=False)
+    rerolls = db.Column(db.Integer, nullable=False, default=DEFAULT_REROLLS)
+    timezone = db.Column(db.String(MAX_STRING_LENGTH), nullable=False)
     claimed_today = db.Column(db.Boolean, nullable=False, default=False)
     claimed_discounts = db.relationship("Claimed", backref="user", lazy=True)
 
@@ -31,10 +38,10 @@ class Discount(db.Model):
     __tablename__ = "discounts"
     id = db.Column(db.Integer, primary_key=True)
     store_id = db.Column(db.Integer, db.ForeignKey("stores.id"), nullable=False)
-    details = db.Column(db.String(255), nullable=False)
+    details = db.Column(db.String(MAX_STRING_LENGTH), nullable=False)
     unlimited_use = db.Column(db.Boolean, nullable=False, default=False)
     remaining = db.Column(db.Integer, nullable=True)
-    category = db.Column(db.String(50), nullable=False)
+    category = db.Column(db.String(SHORT_STRING_LENGTH), nullable=False)
     available = db.Column(db.Boolean, nullable=False, default=True)
     claimed_discounts = db.relationship("Claimed", backref="discount", lazy=True)
 
@@ -55,8 +62,8 @@ class Store(db.Model):
     """Store model."""
     __tablename__ = "stores"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
-    website = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(MAX_STRING_LENGTH), nullable=False)
+    website = db.Column(db.String(MAX_STRING_LENGTH), nullable=False)
     lat = db.Column(db.DECIMAL(9, 6), nullable=False)
     long = db.Column(db.DECIMAL(9, 6), nullable=False)
     discounts = db.relationship("Discount", backref="store", lazy=True)
@@ -79,10 +86,10 @@ class Claimed(db.Model):
     claimed = db.Column(db.Boolean, nullable=True, default=None)
     claimed_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     token = db.Column(
-        db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4())
+        db.String(TOKEN_LENGTH), unique=True, nullable=False, default=lambda: str(uuid.uuid4())
     )
     redeemed = db.Column(db.Boolean, nullable=False, default=False)
-    selected_category = db.Column(db.String(50), nullable=False)
+    selected_category = db.Column(db.String(SHORT_STRING_LENGTH), nullable=False)
     discount_id = db.Column(db.Integer, db.ForeignKey("discounts.id"), nullable=False)
     roll_time = db.Column(
         db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc)
@@ -90,7 +97,7 @@ class Claimed(db.Model):
     claim_time = db.Column(db.DateTime, nullable=True)
     redeemed_time = db.Column(db.DateTime, nullable=True)
     valid = db.Column(db.Boolean, default=True)
-    user_timezone = db.Column(db.String(50), nullable=False)
+    user_timezone = db.Column(db.String(SHORT_STRING_LENGTH), nullable=False)
 
     __table_args__ = (
         db.Index("idx_claimed_by_valid", "claimed_by", "valid"),
@@ -117,7 +124,7 @@ class Claimed(db.Model):
     def local_expiry_time(self):
         """Get local expiry time."""
         if self.claim_time:
-            expiry_time = self.claim_time + timedelta(hours=48)
+            expiry_time = self.claim_time + timedelta(hours=VOUCHER_EXPIRY_HOURS)
             local_time = self.convert_to_local(expiry_time)
             return local_time.strftime("%d %b %Y, %I:%M %p")
         return None

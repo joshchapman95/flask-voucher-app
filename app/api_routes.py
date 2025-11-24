@@ -3,6 +3,14 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask import Blueprint, request, jsonify, current_app
 from app import db, limiter
 from app.models import User, Discount, Claimed
+from app.constants import (
+    RATE_LIMIT_STANDARD,
+    RATE_LIMIT_AUTOCOMPLETE,
+    RATE_LIMIT_AUTOCOMPLETE_DAILY,
+    RATE_LIMIT_PLACE_DETAILS,
+    HTTP_400_BAD_REQUEST,
+    HTTP_500_INTERNAL_SERVER_ERROR
+)
 from .validators import AutocompleteInput, PlaceDetailsInput, InitialLoadInput, GetRerollDiscountInput, ClaimDiscountInput
 from datetime import datetime, timezone
 from app.helpers import (
@@ -35,7 +43,7 @@ def initial_load():
         
         if not inputs.validate():
             sentry_sdk.capture_message(inputs.errors, level="warning")
-            return jsonify({"error": "Invalid input", "messages": inputs.errors}), 400
+            return jsonify({"error": "Invalid input", "messages": inputs.errors}), HTTP_400_BAD_REQUEST
         
         data = request.get_json()
 
@@ -82,22 +90,22 @@ def initial_load():
             categories = ["Any"] + [category[0] for category in categories]
             return render_home(categories)
         
-        return jsonify({"error": "An unexpected error occurred"}), 500
+        return jsonify({"error": "An unexpected error occurred"}), HTTP_500_INTERNAL_SERVER_ERROR
     except Exception as e:
         logger.error(f"Error in initial_load: {str(e)}", exc_info=True)
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "An unexpected error occurred"}), 500
+        return jsonify({"error": "An unexpected error occurred"}), HTTP_500_INTERNAL_SERVER_ERROR
 
 
 @api.route("/get_discount", methods=["POST"])
-@limiter.limit("10 per minute; 100 per day")
+@limiter.limit(RATE_LIMIT_STANDARD)
 def get_discount():
     """Get a discount for the user."""
     try:
         inputs = GetRerollDiscountInput(request)
         if not inputs.validate():
             sentry_sdk.capture_message(inputs.errors, level="warning")
-            return jsonify({"error": "Invalid input", "messages": inputs.errors}), 400
+            return jsonify({"error": "Invalid input", "messages": inputs.errors}), HTTP_400_BAD_REQUEST
         
         data = request.get_json()
 
@@ -169,18 +177,18 @@ def get_discount():
     except Exception as e:
         logger.error(f"Error in get_discount: {str(e)}", exc_info=True)
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "An unexpected error occurred"}), 500
+        return jsonify({"error": "An unexpected error occurred"}), HTTP_500_INTERNAL_SERVER_ERROR
 
 
 @api.route("/reroll", methods=["POST"])
-@limiter.limit("10 per minute; 100 per day")
+@limiter.limit(RATE_LIMIT_STANDARD)
 def reroll():
     """Reroll for a new discount."""
     try:
         inputs = GetRerollDiscountInput(request)
         if not inputs.validate():
             sentry_sdk.capture_message(inputs.errors, level="warning")
-            return jsonify({"error": "Invalid input", "messages": inputs.errors}), 400
+            return jsonify({"error": "Invalid input", "messages": inputs.errors}), HTTP_400_BAD_REQUEST
         
         data = request.get_json()
         device_id = data.get("device_id")
@@ -258,18 +266,18 @@ def reroll():
     except Exception as e:
         logger.error(f"Error in reroll: {str(e)}", exc_info=True)
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "An unexpected error occurred"}), 500
+        return jsonify({"error": "An unexpected error occurred"}), HTTP_500_INTERNAL_SERVER_ERROR
 
 
 @api.route("/claim_discount", methods=["POST"])
-@limiter.limit("10 per minute; 100 per day")
+@limiter.limit(RATE_LIMIT_STANDARD)
 def claim_discount():
     """Claim a discount for the user."""
     try:
         inputs = ClaimDiscountInput(request)
         if not inputs.validate():
             sentry_sdk.capture_message(inputs.errors, level="warning")
-            return jsonify({"error": "Invalid input", "messages": inputs.errors}), 400
+            return jsonify({"error": "Invalid input", "messages": inputs.errors}), HTTP_400_BAD_REQUEST
         
         data = request.get_json()
         device_id = data.get("device_id")
@@ -303,7 +311,7 @@ def claim_discount():
     except Exception as e:
         logger.error(f"Error in claim_discount: {str(e)}", exc_info=True)
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "An unexpected error occurred"}), 500
+        return jsonify({"error": "An unexpected error occurred"}), HTTP_500_INTERNAL_SERVER_ERROR
 
 
 @api.route("/get_stores", methods=["GET"])
@@ -318,8 +326,8 @@ def get_stores():
 
 
 @api.route("/autocomplete", methods=["POST"])
-@limiter.limit("45 per minute")
-@limiter.limit("190 per 24 hours")
+@limiter.limit(RATE_LIMIT_AUTOCOMPLETE)
+@limiter.limit(RATE_LIMIT_AUTOCOMPLETE_DAILY)
 def autocomplete():
     """Handle autocomplete requests for location search."""
     try:
@@ -327,7 +335,7 @@ def autocomplete():
 
         if not inputs.validate():
             sentry_sdk.capture_message(inputs.errors, level="warning")
-            return jsonify({"error": "Invalid input", "messages": inputs.errors}), 400
+            return jsonify({"error": "Invalid input", "messages": inputs.errors}), HTTP_400_BAD_REQUEST
         
         data = request.get_json()
         query = data.get("query")
@@ -347,7 +355,7 @@ def autocomplete():
 
 
 @api.route("/place_details", methods=["POST"])
-@limiter.limit("15 per 24 hours")
+@limiter.limit(RATE_LIMIT_PLACE_DETAILS)
 def place_details():
     """Get details for a specific place."""
     try:
@@ -355,7 +363,7 @@ def place_details():
         
         if not inputs.validate():
             sentry_sdk.capture_message(inputs.errors, level="warning")
-            return jsonify({"error": "Invalid input", "messages": inputs.errors}), 400
+            return jsonify({"error": "Invalid input", "messages": inputs.errors}), HTTP_400_BAD_REQUEST
 
         data = request.get_json()
 
