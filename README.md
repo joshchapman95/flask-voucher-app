@@ -4,7 +4,7 @@
 
 This repository contains the core of a geolocation voucher application I architected for a startup. The project was originally deployed to production serving real users.
 
-Note: This is a sanitized version of the original codebase. Branding, proprietary assets, and commit history have been removed to protect commercial IP. The logic has been altered slightly to ensure compatbility with local runs. The code demonstrates my work with Flask, SQLAlchemy, AWS, and Redis.
+Note: This is a sanitized version of the original codebase. Branding, proprietary assets, and commit history have been removed to protect commercial IP. The logic has been altered slightly to ensure compatibility with local runs. The code demonstrates my work with Flask, SQLAlchemy, AWS, and Redis.
 
 ## Overview
 
